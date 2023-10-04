@@ -168,14 +168,14 @@ RUN if grep -qv "nvidia" <<< "${IMAGE_NAME}"; then \
     rpm-ostree install \
         rocm-hip \
         rocm-opencl \
-        waydroid \
-        weston && \
-    sed -i~ -E 's/=.\$\(command -v (nft|ip6?tables-legacy).*/=/g' /usr/lib/waydroid/data/scripts/waydroid-net.sh \
 ; else \
     rpm-ostree override remove \
         distrobox && \
     rpm-ostree install \
         distrobox-git \
+        waydroid \
+        weston && \
+    sed -i~ -E 's/=.\$\(command -v (nft|ip6?tables-legacy).*/=/g' /usr/lib/waydroid/data/scripts/waydroid-net.sh \
 ; fi
 
 # Cleanup & Finalize
@@ -235,11 +235,9 @@ RUN /tmp/image-info.sh && \
         rm /usr/share/applications/com.github.rafostar.Clapper.desktop && \
         sed -i '/^PRETTY_NAME/s/Silverblue/Bazzite GNOME/' /usr/lib/os-release \
     ; fi && \
-    if grep -qv "nvidia" <<< "${IMAGE_NAME}"; then \
-        systemctl disable waydroid-container.service && \
-        sed -i 's@Exec=waydroid@Exec=/usr/bin/waydroid-launcher@g' /usr/share/applications/Waydroid.desktop && \
-        rm /usr/share/wayland-sessions/weston.desktop \
-    ; fi && \
+    systemctl disable waydroid-container.service && \
+    sed -i 's@Exec=waydroid@Exec=/usr/bin/waydroid-launcher@g' /usr/share/applications/Waydroid.desktop && \
+    rm /usr/share/wayland-sessions/weston.desktop && \
     mkdir -p /usr/etc/default && \
     rm -rf \
         /tmp/* \
