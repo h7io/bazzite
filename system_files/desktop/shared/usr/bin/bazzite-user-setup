@@ -1,20 +1,25 @@
 #!/usr/bin/env bash
 
-# SCRIPT VERSION
-USER_SETUP_VER=7
-USER_SETUP_VER_FILE="$HOME/.bazzite-configured"
-USER_SETUP_VER_RAN=$(cat $USER_SETUP_VER_FILE)
-
-# Run script if updated
-if [[ -f $USER_SETUP_VER_FILE && $USER_SETUP_VER = $USER_SETUP_VER_RAN ]]; then
-  echo "User setup has already run. Exiting..."
-  exit 0
-fi
-
 IMAGE_INFO="/usr/share/ublue-os/image-info.json"
 IMAGE_NAME=$(jq -r '."image-name"' < $IMAGE_INFO)
 BASE_IMAGE_NAME=$(jq -r '."base-image-name"' < $IMAGE_INFO)
+FEDORA_VERSION=$(jq -r '."fedora-version"' < $IMAGE_INFO)
 SYS_ID="$(cat /sys/devices/virtual/dmi/id/product_name)"
+
+# SCRIPT VERSION
+USER_SETUP_VER=8
+USER_SETUP_VER_FILE="$HOME/.bazzite-configured"
+USER_SETUP_VER_RAN=$(cat $USER_SETUP_VER_FILE)
+USER_SETUP_FEDORA_VER_FILE="$HOME/.bazzite-configured-fedora-version"
+USER_SETUP_FEDORA_VER_RAN=$(cat $USER_SETUP_FEDORA_VERSION)
+
+# Run script if updated
+if [[ -f $USER_SETUP_VER_FILE && $USER_SETUP_VER = $USER_SETUP_VER_RAN ]]; then
+  if [[ -f USER_SETUP_FEDORA_VER_FILE && $FEDORA_VERSION = $USER_SETUP_FEDORA_VER_RAN ]]; then
+    echo "User setup has already run. Exiting..."
+    exit 0
+  fi
+fi
 
 if [[ $BASE_IMAGE_NAME =~ "kinoite"  ]]; then
   echo 'Running setup for Kinoite'
@@ -60,12 +65,14 @@ else
   gsettings set org.gtk.gtk4.settings.file-chooser sort-directories-first true
 
   echo 'Installing Gradience presets'
-  mkdir -p $HOME/.config/presets/user/
-  if [[ ! -f "$HOME/.config/presets/user/vapor.json" ]]; then
-    ln -s /usr/share/ublue-os/bazzite/themes/vapor.json $HOME/.config/presets/user/vapor.json
+  mkdir -p "$HOME/.var/app/com.github.GradienceTeam.Gradience/config/presets/user/"
+  if [[ ! -f "$HOME/.var/app/com.github.GradienceTeam.Gradience/config/presets/user/vapor.json" ]]; then
+    rm -f $HOME/.var/app/com.github.GradienceTeam.Gradience/config/presets/user/vapor.json
+    cp /usr/share/ublue-os/bazzite/themes/vapor.json $HOME/.var/app/com.github.GradienceTeam.Gradience/config/presets/user/vapor.json
   fi
-  if [[ ! -f "$HOME/.config/presets/user/vgui2.json" ]]; then
-    ln -s /usr/share/ublue-os/bazzite/themes/vgui2.json $HOME/.config/presets/user/vgui2.json
+  if [[ ! -f "$HOME/.var/app/com.github.GradienceTeam.Gradience/config/presets/user/vgui2.json" ]]; then
+    rm -f $HOME/.var/app/com.github.GradienceTeam.Gradience/config/presets/user/vgui2.json
+    cp /usr/share/ublue-os/bazzite/themes/vgui2.json $HOME/.var/app/com.github.GradienceTeam.Gradience/config/presets/user/vgui2.json
   fi
 
   if [[ $IMAGE_NAME =~ "deck" || $IMAGE_NAME =~ "ally" || $IMAGE_NAME =~ "framegame" ]]; then
@@ -154,3 +161,4 @@ fi
 # Prevent future executions
 echo "Writing state file"
 echo $USER_SETUP_VER > $USER_SETUP_VER_FILE
+echo $FEDORA_VERSION > $USER_SETUP_FEDORA_VER_FILE

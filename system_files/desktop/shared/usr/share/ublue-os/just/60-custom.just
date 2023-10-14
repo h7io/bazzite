@@ -171,10 +171,10 @@ enable-vapor-theme:
     gsettings set org.gnome.desktop.interface document-font-name "Noto Sans 11"
     gsettings set org.gnome.desktop.interface font-name "Noto Sans 11"
     gsettings set org.gnome.desktop.sound theme-name "steam"
-    gradience-cli flatpak-overrides -e both
+    flatpak run --command=gradience-cli com.github.GradienceTeam.Gradience flatpak-overrides -e both
     sudo flatpak override --filesystem=xdg-config/gtk-4.0
     sudo flatpak override --filesystem=xdg-config/gtk-3.0
-    gradience-cli apply -p /usr/share/ublue-os/bazzite/themes/vapor.json
+    flatpak run --command=gradience-cli com.github.GradienceTeam.Gradience apply -n "Vapor"
   else
     echo "This is only supported under GNOME."
   fi
@@ -196,10 +196,10 @@ enable-vgui2-theme:
     gsettings set org.gnome.desktop.interface document-font-name "Noto Sans 11"
     gsettings set org.gnome.desktop.interface font-name "Noto Sans 11"
     gsettings set org.gnome.desktop.sound theme-name "steam"
-    gradience-cli flatpak-overrides -e both
+    flatpak run --command=gradience-cli com.github.GradienceTeam.Gradience flatpak-overrides -e both
     sudo flatpak override --filesystem=xdg-config/gtk-4.0
     sudo flatpak override --filesystem=xdg-config/gtk-3.0
-    gradience-cli apply -p /usr/share/ublue-os/bazzite/themes/vgui2.json
+    flatpak run --command=gradience-cli com.github.GradienceTeam.Gradience apply -n "VGUI2"
   else 
     echo "This is only supported under GNOME."
   fi
@@ -292,7 +292,7 @@ enable-vfio:
         --append-if-missing="${VENDOR_KARG}" \
         --append-if-missing="iommu=pt" \
         --append-if-missing="rd.driver.pre=vfio_pci" \
-        --append-if-missing="vfio.pci.disable_vga=1"
+        --append-if-missing="vfio_pci.disable_vga=1"
       echo "VFIO enabled, make sure you enable IOMMU, VT-d or AMD-v in your BIOS!"
       echo "Please understand that since this is such a niche use case, support will be very limited!"
       echo "To add your unused/second GPU device ids to the vfio driver by running"
@@ -326,3 +326,7 @@ disable-watchdog:
     WATCHDOG_KARGS="$WATCHDOG_KARGS --append-if-missing=modprobe.blacklist=sp5100_tco"
   fi
   rpm-ostree kargs $WATCHDOG_KARGS
+
+# Add SELinux file context for default looking-glass shm file so that libvirt can create it when needed
+selinux-looking-glass:
+  sudo semanage fcontext -a -t svirt_tmpfs_t /dev/shm/looking-glass
