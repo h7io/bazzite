@@ -33,7 +33,7 @@ configure-waydroid:
 get-decky:
   #!/usr/bin/env bash
   export HOME=$(getent passwd ${SUDO_USER:-$USER} | cut -d: -f6)
-  curl -L https://github.com/SteamDeckHomebrew/decky-installer/releases/latest/download/install_prerelease.sh | sh
+  curl -L https://github.com/SteamDeckHomebrew/decky-installer/releases/latest/download/install_release.sh | sh
   sudo chcon -R -t bin_t $HOME/homebrew/services/PluginLoader
 
 # Install EmuDeck (https://www.emudeck.com/)
@@ -58,11 +58,6 @@ get-steamcmd:
 install-nix:
   #!/usr/bin/env bash
   curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix | sudo bash -s -- install --no-confirm
-  nix_systemd_file_location='/nix/var/nix/profiles/default'
-  sudo rm -f /etc/systemd/system/nix-daemon.service
-  sudo rm -f /etc/systemd/system/nix-daemon.socket
-  sudo cp $nix_systemd_file_location/lib/systemd/system/nix-daemon.service /etc/systemd/system/nix-daemon.service
-  sudo cp $nix_systemd_file_location/lib/systemd/system/nix-daemon.socket /etc/systemd/system/nix-daemon.socket
 
 # Uninstall Nix
 remove-nix:
@@ -442,9 +437,3 @@ add-user-to-input-group:
     sudo bash -c 'grep "input" /lib/group >> /etc/group'
   fi
   sudo usermod -a -G input $USER
-
-# Disable DNS over TLS on Deck images (Default enabled)
-disable-secure-dns:
-  #!/usr/bin/env bash
-  sudo rm -f /etc/sysconfig/network
-  sudo rm -f /etc/systemd/resolved.conf
