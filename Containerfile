@@ -82,9 +82,6 @@ RUN rpm-ostree install \
     input-remapper \
     system76-scheduler \
     hl2linux-selinux \
-    libobs_glcapture \
-    libobs_vkcapture \
-    obs-vkcapture \
     ladspa-caps-plugins \
     ladspa-noise-suppression-for-voice \
     tailscale \
@@ -100,6 +97,7 @@ RUN rpm-ostree install \
     lzip \
     libxcrypt-compat \
     mesa-libGLU \
+    vulkan-tools \
     twitter-twemoji-fonts \
     lato-fonts \
     fira-code-fonts && \
@@ -162,6 +160,7 @@ RUN if grep -q "kinoite" <<< "${BASE_IMAGE_NAME}"; then \
         gnome-randr-rust \
         gnome-shell-extension-user-theme \
         gnome-shell-extension-gsconnect \
+        nautilus-gsconnect \
         gnome-shell-extension-system76-scheduler \
         gnome-shell-extension-caribou-blocker \
         gnome-shell-extension-compiz-windows-effect \
@@ -169,8 +168,7 @@ RUN if grep -q "kinoite" <<< "${BASE_IMAGE_NAME}"; then \
         gnome-shell-extension-blur-my-shell \
         gnome-shell-extension-hanabi \
         gnome-shell-extension-gamerzilla \
-        rom-properties-gtk3 \
-        openssh-askpass && \
+        rom-properties-gtk3 && \
     rpm-ostree override remove \
         gnome-classic-session \
         gnome-tour \
@@ -199,6 +197,7 @@ RUN if grep -qv "nvidia" <<< "${IMAGE_NAME}"; then \
     rpm-ostree install \
         rocm-hip \
         rocm-opencl \
+        rocm-clinfo \
         waydroid \
         weston && \
     sed -i~ -E 's/=.\$\(command -v (nft|ip6?tables-legacy).*/=/g' /usr/lib/waydroid/data/scripts/waydroid-net.sh \
@@ -230,7 +229,8 @@ RUN if grep -qv "nvidia" <<< "${IMAGE_NAME}"; then \
         libvdpau.i686 \
         libdbusmenu-gtk3.i686 \
         libatomic.i686 \
-        pipewire-alsa.i686 && \
+        pipewire-alsa.i686 \
+        clinfo && \
     sed -i '0,/enabled=0/s//enabled=1/' /etc/yum.repos.d/rpmfusion-nonfree-steam.repo && \
     sed -i '0,/enabled=1/s//enabled=0/' /etc/yum.repos.d/rpmfusion-nonfree.repo && \
     sed -i '0,/enabled=1/s//enabled=0/' /etc/yum.repos.d/rpmfusion-nonfree-updates.repo && \
@@ -249,9 +249,12 @@ RUN if grep -qv "nvidia" <<< "${IMAGE_NAME}"; then \
         winetricks \
         protontricks \
         latencyflex-vulkan-layer \
-        vkBasalt \
-        mangohud \
-        vulkan-tools \
+        vkBasalt.x86_64 \
+        vkBasalt.i686 \
+        mangohud.x86_64 \
+        mangohud.i686 \
+        obs-vkcapture.x86_64 \
+        obs-vkcapture.i686 \
 ; fi
 
 # Cleanup & Finalize
@@ -386,7 +389,6 @@ RUN if grep -q "kinoite" <<< "${BASE_IMAGE_NAME}"; then \
 # Dock updater - done manually due to proprietary parts preventing it from being on Copr
 # Neptune firmware - done manually due to "TBD" license on needed audio firmware
 RUN rpm-ostree install \
-    vulkan-tools \
     jupiter-fan-control \
     jupiter-hw-support-btrfs \
     powerbuttond \
@@ -396,8 +398,12 @@ RUN rpm-ostree install \
     steam_notif_daemon \
     ryzenadj \
     latencyflex-vulkan-layer \
-    vkBasalt \
-    mangohud \
+    vkBasalt.x86_64 \
+    vkBasalt.i686 \
+    mangohud.x86_64 \
+    mangohud.i686 \
+    obs-vkcapture.x86_64 \
+    obs-vkcapture.i686 \
     sdgyrodsu \
     sddm-sugar-steamOS \
     ibus-pinyin \
