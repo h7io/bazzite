@@ -14,7 +14,7 @@
 - [Why & Frequently Asked Questions](https://github.com/ublue-os/bazzite#why)
 - [Showcase & Newsletter](https://github.com/ublue-os/bazzite#showcase)
 - [Custom Packages](https://github.com/ublue-os/bazzite#custom-packages)
-- [Verification & Metrics](https://github.com/ublue-os/bazzite#verification)
+- [Verification & asdMetrics](https://github.com/ublue-os/bazzite#verification)
 - [Special Thanks](https://github.com/ublue-os/bazzite#special-thanks)
 - [Building Your Own](https://github.com/ublue-os/bazzite#build-your-own)
 - [Community](https://github.com/ublue-os/bazzite#join-the-community)
